@@ -47,10 +47,13 @@
    - Memastikan data masuk ke database (termasuk efek soft delete) dan menyiapkan laporan ini beserta placeholder screenshot.
 
 ## Bukti / Screenshots
-- `![Tampilan Laravel Berjalan](screenshots/laravel-serve.png)`
-- `![Postman Create Todo](screenshots/postman-create.png)`
-- `![Postman Get All Todos](screenshots/postman-getall.png)`
-- `![Database Todos](screenshots/database-todos.png)`
+![Tampilan Laravel Berjalan](../screenshots/laravel-serve.png)
+
+![Postman Create Todo](../screenshots/postman-create.png)
+
+![Postman Get All Todos](../screenshots/postman-getall.png)
+
+![Database Todos](../screenshots/database-todos.png)
 
 ## Kesimpulan
 Seluruh langkah Codelab Modul 5 telah terlaksana: proyek Laravel berhasil dibuat, terhubung dengan database MySQL eksternal, dan disertai API Todo CRUD lengkap beserta koleksi Postman untuk pengujian. Konfigurasi, kode, serta dokumentasi siap ditunjukkan kepada asisten pada pekan materi/demonstrasi.
