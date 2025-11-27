@@ -1,0 +1,130 @@
+{
+  "info": {
+    "name": "Laravel Todo API",
+    "description": "Koleksi request untuk API Todo Laravel Modul 5.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Todo #1",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Belajar Laravel\",\n  \"description\": \"Mengikuti instruksi modul untuk todo list\",\n  \"status\": \"pending\",\n  \"due_date\": \"2025-12-15\",\n  \"priority\": 2,\n  \"category\": \"study\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/todos",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "todos" ]
+        }
+      }
+    },
+    {
+      "name": "Create Todo #2",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Rapihkan catatan koding\",\n  \"description\": \"Rapihkan catatan modul sebelum demo\",\n  \"status\": \"pending\",\n  \"due_date\": \"2025-12-18\",\n  \"priority\": 3,\n  \"category\": \"personal\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/todos",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "todos" ]
+        }
+      }
+    },
+    {
+      "name": "Create Todo #3",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Siapkan bahan presentasi\",\n  \"description\": \"Siapkan slide untuk demo API\",\n  \"status\": \"pending\",\n  \"due_date\": \"2025-12-20\",\n  \"priority\": 4,\n  \"category\": \"work\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/todos",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "todos" ]
+        }
+      }
+    },
+    {
+      "name": "Get All Todos",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Accept", "value": "application/json" } ],
+        "url": {
+          "raw": "{{base_url}}/api/todos?limit=10&page=1",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "todos" ],
+          "query": [
+            { "key": "limit", "value": "10" },
+            { "key": "page", "value": "1" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Todo By ID",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Accept", "value": "application/json" } ],
+        "url": {
+          "raw": "{{base_url}}/api/todos/{{todo_id}}",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "todos", "{{todo_id}}" ]
+        }
+      }
+    },
+    {
+      "name": "Update Todo",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"in_progress\",\n  \"priority\": 3,\n  \"category\": \"work\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/todos/{{todo_id}}",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "todos", "{{todo_id}}" ]
+        }
+      }
+    },
+    {
+      "name": "Delete Todo",
+      "request": {
+        "method": "DELETE",
+        "header": [ { "key": "Accept", "value": "application/json" } ],
+        "url": {
+          "raw": "{{base_url}}/api/todos/{{todo_id_delete}}",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "todos", "{{todo_id_delete}}" ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8020" },
+    { "key": "todo_id", "value": "3" },
+    { "key": "todo_id_delete", "value": "2" }
+  ]
+}
