@@ -1,0 +1,148 @@
+{
+  "info": {
+    "name": "Campus Event API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "ebad7b12-a5d4-4a77-9aed-dde8478f6941"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create Event",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Mini Bootcamp Product Design\",\n  \"category\": \"workshop\",\n  \"description\": \"Latihan membangun prototype aplikasi dengan mentor industri.\",\n  \"location\": \"Ruang Inovasi Lt. 3\",\n  \"city\": \"Malang\",\n  \"start_date\": \"2025-12-20 10:00:00\",\n  \"capacity\": 25,\n  \"available_seats\": 22,\n  \"ticket_price\": 10000,\n  \"status\": \"scheduled\",\n  \"is_featured\": true\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/events",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "events"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Events (with pagination & filter)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/events?page=1&limit=5&search=meetup&orderBy=start_date&sortBy=asc",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "events"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "5"
+            },
+            {
+              "key": "search",
+              "value": "meetup"
+            },
+            {
+              "key": "orderBy",
+              "value": "start_date"
+            },
+            {
+              "key": "sortBy",
+              "value": "asc"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Event Detail",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/events/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "events",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Event",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Tech Meetup E-Sport Community\",\n  \"available_seats\": 48,\n  \"status\": \"scheduled\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/events/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "events",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Event",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/events/2",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "events",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
