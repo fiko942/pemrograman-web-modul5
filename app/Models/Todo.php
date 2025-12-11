@@ -20,6 +20,7 @@ class Todo extends Model
         'priority',
         'category',
         'attachment_path',
+        'file_path',
     ];
 
     protected $casts = [

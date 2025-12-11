@@ -50,13 +50,18 @@ class TodoController extends Controller
             'priority' => 'nullable|integer|min:1|max:5',
             'category' => 'nullable|in:personal,work,study,others',
             'attachment' => 'sometimes|file|mimes:jpg,jpeg,png,pdf,txt|max:2048',
+            'file' => 'sometimes|file|max:5120',
         ]);
 
         if ($request->hasFile('attachment')) {
             $data['attachment_path'] = $this->storeAttachment($request->file('attachment'));
         }
 
-        unset($data['attachment']);
+        if ($request->hasFile('file')) {
+            $data['file_path'] = $this->storeTodoFile($request->file('file'));
+        }
+
+        unset($data['attachment'], $data['file']);
 
         $todo = Todo::create($data);
 
@@ -92,11 +97,12 @@ class TodoController extends Controller
             'priority' => 'sometimes|nullable|integer|min:1|max:5',
             'category' => 'sometimes|nullable|in:personal,work,study,others',
             'attachment' => 'sometimes|file|mimes:jpg,jpeg,png,pdf,txt|max:2048',
+            'file' => 'sometimes|file|max:5120',
             'remove_attachment' => 'sometimes|boolean',
         ]);
 
         $removeAttachment = $request->boolean('remove_attachment');
-        unset($data['attachment'], $data['remove_attachment']);
+        unset($data['attachment'], $data['file'], $data['remove_attachment']);
 
         if ($request->hasFile('attachment')) {
             $this->deleteAttachment($todo->attachment_path);
@@ -104,6 +110,11 @@ class TodoController extends Controller
         } elseif ($removeAttachment) {
             $this->deleteAttachment($todo->attachment_path);
             $data['attachment_path'] = null;
+        }
+
+        if ($request->hasFile('file')) {
+            $this->deleteFilePath($todo->file_path);
+            $data['file_path'] = $this->storeTodoFile($request->file('file'));
         }
 
         $todo->update($data);
@@ -122,6 +133,7 @@ class TodoController extends Controller
     public function destroy(Todo $todo)
     {
         $this->deleteAttachment($todo->attachment_path);
+        $this->deleteFilePath($todo->file_path);
         $todo->delete();
 
         return response()->json([
@@ -156,11 +168,37 @@ class TodoController extends Controller
     }
 
     /**
+     * Simpan file todo ke folder publik "todos" dengan nama unik.
+     *
+     * @param UploadedFile $file berkas yang diunggah dari request.
+     */
+    private function storeTodoFile(UploadedFile $file): string
+    {
+        $filename = uniqid('todo_', true).'.'.$file->getClientOriginalExtension();
+
+        Storage::disk('public')->putFileAs('todos', $file, $filename);
+
+        return 'todos/'.$filename;
+    }
+
+    /**
      * Hapus file lampiran jika ada di storage.
      *
      * @param string|null $path path relatif lampiran yang akan dihapus.
      */
     private function deleteAttachment(?string $path): void
+    {
+        if ($path && Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
+    }
+
+    /**
+     * Hapus file todo berdasarkan kolom file_path.
+     *
+     * @param string|null $path path relatif file yang disimpan.
+     */
+    private function deleteFilePath(?string $path): void
     {
         if ($path && Storage::disk('public')->exists($path)) {
             Storage::disk('public')->delete($path);
