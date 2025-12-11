@@ -1,0 +1,244 @@
+{
+  "info": {
+    "name": "Laravel Todo API (Modified for Modul 6)",
+    "description": "Koleksi request untuk API Todo Laravel Modul 6 (JWT Auth & File Storage).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Testing User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password\",\n  \"password_confirmation\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "auth", "register" ]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "auth", "login" ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set(\"jwt_token\", jsonData.access_token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "auth", "me" ]
+            },
+            "auth": { "type": "bearer" }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "auth", "logout" ]
+            },
+            "auth": { "type": "bearer" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Todo",
+      "item": [
+        {
+          "name": "Create Todo (File Upload)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "title", "value": "Belajar Laravel (with File)", "type": "text" },
+                { "key": "description", "value": "Mengikuti instruksi modul untuk todo list", "type": "text" },
+                { "key": "status", "value": "pending", "type": "text" },
+                { "key": "due_date", "value": "2025-12-15", "type": "text" },
+                { "key": "priority", "value": "2", "type": "text" },
+                { "key": "category", "value": "study", "type": "text" },
+                { "key": "file", "type": "file", "src": "/path/to/your/file.png" }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/todos",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "todos" ]
+            },
+            "auth": { "type": "bearer" }
+          }
+        },
+        {
+          "name": "Create Todo #2 (No File)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Rapihkan catatan koding\",\n  \"description\": \"Rapihkan catatan modul sebelum demo\",\n  \"status\": \"pending\",\n  \"due_date\": \"2025-12-18\",\n  \"priority\": 3,\n  \"category\": \"personal\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/todos",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "todos" ]
+            },
+            "auth": { "type": "bearer" }
+          }
+        },
+        {
+          "name": "Create Todo #3 (No File)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Siapkan bahan presentasi\",\n  \"description\": \"Siapkan slide untuk demo API\",\n  \"status\": \"pending\",\n  \"due_date\": \"2025-12-20\",\n  \"priority\": 4,\n  \"category\": \"work\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/todos",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "todos" ]
+            },
+            "auth": { "type": "bearer" }
+          }
+        },
+        {
+          "name": "Get All Todos (Public)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": {
+              "raw": "{{base_url}}/api/todos?limit=10&page=1",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "todos" ],
+              "query": [
+                { "key": "limit", "value": "10" },
+                { "key": "page", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Todo By ID (Public)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": {
+              "raw": "{{base_url}}/api/todos/{{todo_id}}",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "todos", "{{todo_id}}" ]
+            }
+          }
+        },
+        {
+          "name": "Update Todo (File Upload)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "_method", "value": "PATCH", "type": "text" },
+                { "key": "status", "value": "in_progress", "type": "text" },
+                { "key": "priority", "value": "3", "type": "text" },
+                { "key": "category", "value": "work", "type": "text" },
+                { "key": "file", "type": "file", "src": "/path/to/your/new_file.jpg" }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/todos/{{todo_id}}",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "todos", "{{todo_id}}" ]
+            },
+            "auth": { "type": "bearer" }
+          }
+        },
+        {
+          "name": "Delete Todo",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": {
+              "raw": "{{base_url}}/api/todos/{{todo_id_delete}}",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "todos", "{{todo_id_delete}}" ]
+            },
+            "auth": { "type": "bearer" }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8020" },
+    { "key": "todo_id", "value": "3" },
+    { "key": "todo_id_delete", "value": "2" },
+    { "key": "jwt_token", "value": "", "type": "string" }
+  ]
+}
