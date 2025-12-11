@@ -19,6 +19,13 @@
 - `GET /api/todos/{id}/attachment` — unduh lampiran milik todo terkait (404 jika tidak ada).
 - `DELETE /api/todos/{id}` — hapus todo dan lampiran yang terkait.
 
+## JWT Authentication
+- Install paket: `composer require php-open-source-saver/jwt-auth` (butuh PHP >= 8.2).
+- Publish konfigurasi: `php artisan vendor:publish --provider="PHPOpenSourceSaver\JWTAuth\Providers\LaravelServiceProvider"`.
+- Generate secret: `php artisan jwt:secret` lalu pastikan guard default di `config/auth.php` adalah `api` (driver `jwt`).
+- Endpoint: `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me`, `POST /api/auth/logout`. Endpoint `me` dan `logout` wajib header `Authorization: Bearer <token>`.
+- Guard bawaan diubah menjadi `api` sehingga helper `auth()` otomatis memakai JWT.
+
 ## Catatan Middleware Logging
 - Middleware terdaftar sebagai alias `api.logger` dan sudah diterapkan ke seluruh route API.
 - Setiap respons membawa header `X-Request-ID`; detail request tercatat di `storage/logs/api.log` untuk memudahkan trace/debugging.
