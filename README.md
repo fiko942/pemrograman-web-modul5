@@ -1,59 +1,28 @@
-# LAPORAN CODELAB MODUL 5
+# LAPORAN CODELAB MODUL 6 (Middleware & File Storage)
 
-## Cover
-- **Nama**  : WIJI FIKO TEREN
-- **NIM**   : 202310370311437
-- **Kelas** : Pemrograman Mobile G
+## Ringkasan Perubahan
+- Middleware `api.logger` untuk semua route API yang menulis log request (method, path, status, durasi, request_id) ke `storage/logs/api.log` dan menambahkan header `X-Request-ID` di setiap respons.
+- Todo kini mendukung lampiran file: kolom `attachment_path`, upload saat create/update (`attachment` pada multipart form-data), opsi hapus lampiran (`remove_attachment`), serta endpoint download khusus.
+- Respons JSON menambahkan properti `attachment_url` yang dibangun otomatis dari disk `public`, dan file otomatis dibersihkan saat todo dihapus atau lampiran diganti.
 
-## Tujuan Praktikum
-1. Menginstal dan menyiapkan proyek Laravel 12 berbasis API.
-2. Melakukan konfigurasi database MySQL eksternal serta menjalankan migration.
-3. Mengembangkan API Todo List lengkap dengan model, controller, routing, serta endpoint CRUD.
-4. Menguji seluruh endpoint menggunakan Postman sesuai panduan modul.
+## Persiapan & Cara Menjalankan
+1. Salin `.env.example` lalu isi koneksi database.
+2. Install dependensi: `composer install`.
+3. Jalankan migrasi (termasuk kolom lampiran baru): `php artisan migrate`.
+4. Aktifkan akses publik ke storage: `php artisan storage:link`.
+5. Jalankan server: `php artisan serve --port=8020` lalu akses API di `http://127.0.0.1:8020/api`.
 
-## Tools dan Teknologi
-- macOS (zsh)
-- PHP 8.4.14 + Composer 2.9.2
-- Laravel Installer 5.23
-- Node.js 18.20.8 (untuk Vite/dev server)
-- MySQL server eksternal (IP 103.150.190.87, DB `praktikum-web-modul5`)
-- Postman (workspace & collection Todo API)
+## Endpoint Utama
+- `GET /api/todos` — pagination + filter `search`, `status`, `category`, `priority`, `limit`. Respons menyertakan `attachment_url` bila ada.
+- `POST /api/todos` — buat todo. Gunakan `multipart/form-data` bila menyertakan `attachment` (jpg, png, pdf, txt, max 2MB).
+- `PATCH /api/todos/{id}` — ubah data. Sertakan `attachment` untuk mengganti file atau `remove_attachment=true` untuk menghapus lampiran lama.
+- `GET /api/todos/{id}/attachment` — unduh lampiran milik todo terkait (404 jika tidak ada).
+- `DELETE /api/todos/{id}` — hapus todo dan lampiran yang terkait.
 
-## Ringkasan Langkah Implementasi
-1. **Persiapan lingkungan**
-   - Verifikasi versi PHP, Composer, Node.js, dan Laravel installer.
-   - Pastikan akses ke server MySQL eksternal yang disediakan.
-2. **Pembuatan proyek Laravel**
-   - Menjalankan `laravel new pemrograman-web --no-interaction` dan otomatis menjalankan migration default.
-   - Membuka proyek di VS Code dan menginisialisasi `.env`.
-3. **Konfigurasi database**
-   - Mengubah `.env` menjadi koneksi MySQL remote (`praktikum-web-modul5`).
-   - Menjalankan `php artisan migrate` untuk membuat tabel default pada server tersebut.
-4. **Membangun schema Todo**
-   - Membuat migration `create_todos_table` berisi kolom `title`, `description`, `status`, `due_date`, `priority`, `timestamps`, dan `softDeletes`.
-   - Membuat migration alter `add_category_to_todos_table` dengan enum `personal/work/study/others`.
-   - Menjalankan kembali `php artisan migrate` agar tabel Todo siap.
-5. **Model dan Controller**
-   - Generate `Todo` model dan `TodoController --api --model=Todo`.
-   - Menambahkan `fillable`, `SoftDeletes`, dan cast di model.
-   - Mengimplementasikan fungsi CRUD di controller lengkap dengan validasi serta filter pencarian sesuai screenshot modul.
-6. **Routing API**
-   - Menjalankan `php artisan install:api`, menambahkan `Route::apiResource('todos', TodoController::class);` pada `routes/api.php`.
-   - Memastikan route terdaftar melalui `php artisan route:list`.
-7. **Testing dengan Postman**
-   - Membuat collection `postman/todo-api.postman_collection.json` berisi request POST (3 data contoh), GET all, GET by ID, PATCH, DELETE.
-   - Mengimpor collection ke Postman, menjalankan setiap request pada `http://127.0.0.1:8020/api/todos` sambil menjalankan `php artisan serve --port=8020`.
-8. **Verifikasi & Dokumentasi**
-   - Memastikan data masuk ke database (termasuk efek soft delete) dan menyiapkan laporan ini beserta placeholder screenshot.
+## Catatan Middleware Logging
+- Middleware terdaftar sebagai alias `api.logger` dan sudah diterapkan ke seluruh route API.
+- Setiap respons membawa header `X-Request-ID`; detail request tercatat di `storage/logs/api.log` untuk memudahkan trace/debugging.
 
-## Bukti / Screenshots
-![Tampilan Laravel Berjalan](../screenshots/laravel-serve.png)
-
-![Postman Create Todo](../screenshots/postman-create.png)
-
-![Postman Get All Todos](../screenshots/postman-getall.png)
-
-![Database Todos](../screenshots/database-todos.png)
-
-## Kesimpulan
-Seluruh langkah Codelab Modul 5 telah terlaksana: proyek Laravel berhasil dibuat, terhubung dengan database MySQL eksternal, dan disertai API Todo CRUD lengkap beserta koleksi Postman untuk pengujian. Konfigurasi, kode, serta dokumentasi siap ditunjukkan kepada asisten pada pekan materi/demonstrasi.
+## Pengujian
+- Koleksi Postman tetap tersedia di `postman/todo-api.postman_collection.json`; tambah request download lampiran sesuai endpoint di atas bila diperlukan.
+- Lampiran disimpan di `storage/app/public/attachments` dan diakses publik melalui symlink `public/storage`.

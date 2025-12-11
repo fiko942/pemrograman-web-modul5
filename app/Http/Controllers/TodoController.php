@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Todo;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class TodoController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Tampilkan daftar todo dengan filter pencarian dasar dan pagination.
+     *
+     * @param Request $request permintaan HTTP yang membawa parameter filter.
      */
     public function index(Request $request)
     {
@@ -32,7 +36,9 @@ class TodoController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Simpan todo baru lengkap dengan validasi dan lampiran opsional.
+     *
+     * @param Request $request permintaan HTTP yang membawa data todo.
      */
     public function store(Request $request)
     {
@@ -43,7 +49,14 @@ class TodoController extends Controller
             'due_date' => 'nullable|date',
             'priority' => 'nullable|integer|min:1|max:5',
             'category' => 'nullable|in:personal,work,study,others',
+            'attachment' => 'sometimes|file|mimes:jpg,jpeg,png,pdf,txt|max:2048',
         ]);
+
+        if ($request->hasFile('attachment')) {
+            $data['attachment_path'] = $this->storeAttachment($request->file('attachment'));
+        }
+
+        unset($data['attachment']);
 
         $todo = Todo::create($data);
 
@@ -54,7 +67,9 @@ class TodoController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Detail satu todo.
+     *
+     * @param Todo $todo entitas todo hasil binding model.
      */
     public function show(Todo $todo)
     {
@@ -62,7 +77,10 @@ class TodoController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Perbarui todo beserta opsi mengganti atau menghapus lampiran.
+     *
+     * @param Request $request permintaan HTTP yang membawa perubahan todo.
+     * @param Todo $todo entitas todo hasil binding model.
      */
     public function update(Request $request, Todo $todo)
     {
@@ -73,7 +91,20 @@ class TodoController extends Controller
             'due_date' => 'sometimes|nullable|date',
             'priority' => 'sometimes|nullable|integer|min:1|max:5',
             'category' => 'sometimes|nullable|in:personal,work,study,others',
+            'attachment' => 'sometimes|file|mimes:jpg,jpeg,png,pdf,txt|max:2048',
+            'remove_attachment' => 'sometimes|boolean',
         ]);
+
+        $removeAttachment = $request->boolean('remove_attachment');
+        unset($data['attachment'], $data['remove_attachment']);
+
+        if ($request->hasFile('attachment')) {
+            $this->deleteAttachment($todo->attachment_path);
+            $data['attachment_path'] = $this->storeAttachment($request->file('attachment'));
+        } elseif ($removeAttachment) {
+            $this->deleteAttachment($todo->attachment_path);
+            $data['attachment_path'] = null;
+        }
 
         $todo->update($data);
 
@@ -84,14 +115,55 @@ class TodoController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Hapus todo beserta file lampiran jika ada.
+     *
+     * @param Todo $todo entitas todo hasil binding model.
      */
     public function destroy(Todo $todo)
     {
+        $this->deleteAttachment($todo->attachment_path);
         $todo->delete();
 
         return response()->json([
             'message' => 'Todo deleted successfully',
         ]);
+    }
+
+    /**
+     * Unduh lampiran yang terasosiasi dengan todo tertentu.
+     *
+     * @param Todo $todo entitas todo hasil binding model.
+     */
+    public function downloadAttachment(Todo $todo)
+    {
+        if (!$todo->attachment_path || !Storage::disk('public')->exists($todo->attachment_path)) {
+            return response()->json([
+                'message' => 'Attachment not found',
+            ], 404);
+        }
+
+        return Storage::disk('public')->download($todo->attachment_path);
+    }
+
+    /**
+     * Simpan file lampiran ke disk publik dan kembalikan path relatif.
+     *
+     * @param UploadedFile $file berkas yang diunggah dari request.
+     */
+    private function storeAttachment(UploadedFile $file): string
+    {
+        return $file->store('attachments', 'public');
+    }
+
+    /**
+     * Hapus file lampiran jika ada di storage.
+     *
+     * @param string|null $path path relatif lampiran yang akan dihapus.
+     */
+    private function deleteAttachment(?string $path): void
+    {
+        if ($path && Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
     }
 }

@@ -12,7 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'api.logger' => \App\Http\Middleware\ApiRequestLogger::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
