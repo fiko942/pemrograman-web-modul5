@@ -1,0 +1,97 @@
+
+### Auth
+@baseUrl = http://localhost:8000/api
+@token = {{login.response.body.access_token}}
+
+### Register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "password"
+}
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "test@example.com",
+    "password": "password"
+}
+
+### Me
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Logout
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Menu Items
+### Get All Menus (Public)
+GET {{baseUrl}}/menu-items
+Accept: application/json
+
+### Create Menu (Auth, Multipart)
+POST {{baseUrl}}/menu-items
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="name"
+
+Nasi Goreng Spesial
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
+
+Nasi goreng dengan telur dan ayam
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="price"
+
+25000
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="nasigoreng.jpg"
+Content-Type: image/jpeg
+
+< ./nasigoreng.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Get Menu Detail (Public)
+@menuId = 1
+GET {{baseUrl}}/menu-items/{{menuId}}
+Accept: application/json
+
+### Update Menu (Auth, Multipart)
+# Note: For PHP Multipart PUT, use POST with _method=PUT
+POST {{baseUrl}}/menu-items/{{menuId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="_method"
+
+PUT
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="name"
+
+Nasi Goreng Seafood
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="price"
+
+30000
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Delete Menu
+DELETE {{baseUrl}}/menu-items/{{menuId}}
+Authorization: Bearer {{token}}
+Accept: application/json
